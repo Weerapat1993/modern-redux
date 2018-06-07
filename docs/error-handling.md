@@ -2,7 +2,7 @@
 
 [< Back](../README.md)
 
-![User Interface State](../app/assets/images/UserInterface.png)
+![User Interface State](../src/assets/images/UserInterface.png)
 
 ## User Interface State
 * [Ideal State](#ideal-state)
@@ -32,7 +32,7 @@
 
 ### ตัวอย่างการทำ Error Handling
 
-![Error Handling](../app/assets/images/ErrorHandling.gif)
+![Error Handling](../src/assets/images/ErrorHandling.gif)
 
 **Reference**
 * [https://medium.com/20scoops-cnx/user-interface-state-ทุกแอปพลิเคชั่นควรมี-69afe4b5b09](https://medium.com/20scoops-cnx/user-interface-state-ทุกแอปพลิเคชั่นควรมี-69afe4b5b09)

@@ -6,7 +6,6 @@
 ```json
 {
   "dependencies": {
-    ...
     "modern-redux": "https://github.com/Weerapat1993/modern-redux.git",
   }
 }

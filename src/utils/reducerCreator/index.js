@@ -1,1 +1,1 @@
-export { reducerCreator } from './reducerCreator'
+export { reducerCreator, defaultState } from './reducerCreator'

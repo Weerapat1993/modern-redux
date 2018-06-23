@@ -1,14 +1,28 @@
 import _ from 'lodash'
 import R from 'ramda'
 
-export const defaultInitialState = {
+const defaultInitialState = {
   keys: {},
   byID: [],
   isFetching: false,
   isReload: true,
+  isDeleting: false,
   error: '',
+  errorDelete: '',
   code: 0,
 }
+
+/**
+ * Default Initial State
+ * @param {Object} newState set initial state
+ * @return {State}
+ * @example
+ * export const initialState = defaultState({ ...state })
+ */
+export const defaultState = newState => ({
+  ...defaultInitialState,
+  ...newState,
+})
 
 /**
  * @typedef {defaultInitialState} State
@@ -208,12 +222,23 @@ export const reducerCreator = (state, action, keyID) => {
     ...newState,
   })
 
+  /**
+   * Update data with key case request
+   * @param {StateWithKey} newState create new state
+   * @return {State} get new state
+   */
   const updateDataWithKeyRequest = newState => setStateWithKey({
     isEditing: true,
     errorUpdate: '',
     ...newState,
   })
 
+  /**
+   * Update data with key case success
+   * @param {Object} data data update with key
+   * @param {StateWithKey} newState create new state
+   * @return {State} get new state
+   */
   const updateDataWithKeySuccess = (data, newState) => setStateWithKey({
     isEditing: false,
     errorUpdate: '',
@@ -224,9 +249,48 @@ export const reducerCreator = (state, action, keyID) => {
     ...newState,
   })
 
+  /**
+   * Update data with key case failure
+   * @param {StateWithKey} newState create new state
+   * @return {State} get new state
+   */
   const updateDataWithKeyFailure = newState => setStateWithKey({
     isEditing: false,
     errorUpdate: errorMessage(),
+    ...newState,
+  })
+
+  /**
+   * Delete key in byID case request
+   * @param {State} newState create new state
+   * @return {State} get new state
+   */
+  const deleteDataRequest = newState => setState({
+    isDeleting: true,
+    errorDelete: '',
+    ...newState,
+  })
+
+  /**
+   * Delete key in byID case success
+   * @param {State} newState create new state
+   * @return {State} get new state
+   */
+  const deleteDataSuccess = newState => setState({
+    isDeleting: false,
+    errorDelete: '',
+    byID: state.byID.filter(item => item !== key),
+    ...newState,
+  })
+
+  /**
+   * Delete key in byID case failure
+   * @param {State} newState create new state
+   * @return {State} get new state
+   */
+  const deleteDataFailure = newState => setState({
+    isDeleting: false,
+    errorDelete: errorMessage(),
     ...newState,
   })
 
@@ -242,9 +306,26 @@ export const reducerCreator = (state, action, keyID) => {
     setStateWithKeyRequest,
     setStateWithKeySuccess,
     setStateWithKeyFailure,
-    updateDataWithKeyRequest,
-    updateDataWithKeySuccess,
-    updateDataWithKeyFailure,
+    fetchList: {
+      request: setStateRequest,
+      success: normalizerList,
+      failure: setStateFailure,
+    },
+    fetchDataWithKey: {
+      request: setStateWithKeyRequest,
+      success: setStateWithKeySuccess,
+      failure: setStateWithKeyFailure,
+    },
+    updateDataWithKey: {
+      request: updateDataWithKeyRequest,
+      success: updateDataWithKeySuccess,
+      failure: updateDataWithKeyFailure,
+    },
+    deleteKey: {
+      request: deleteDataRequest,
+      success: deleteDataSuccess,
+      failure: deleteDataFailure,
+    },
   }
 }
 

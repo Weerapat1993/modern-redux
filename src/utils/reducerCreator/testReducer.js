@@ -4,6 +4,7 @@ import { asyncActionType } from '../async-action-types'
 const ACTION_LIST = asyncActionType('ACTION_LIST')
 const ACTION_DETAIL = asyncActionType('ACTION_DETAIL')
 const ACTION_UPDATE = asyncActionType('ACTION_UPDATE')
+const ACTION_DELETE = asyncActionType('ACTION_DELETE')
 
 const initialState = {
   keys: {},
@@ -19,36 +20,37 @@ const testReducer = (state = initialState, action) => {
   const { type, data } = action
   // Reducer Creator
   const {
-    setStateWithKeyRequest,
-    setStateWithKeySuccess,
-    setStateWithKeyFailure,
-    setStateRequest,
-    setStateFailure,
-    updateDataWithKeyRequest,
-    updateDataWithKeySuccess,
-    updateDataWithKeyFailure,
-    normalizerList,
+    fetchList,
+    fetchDataWithKey,
+    updateDataWithKey,
+    deleteKey,
   } = reducerCreator(state, action)
   // Switch Case to Store
   switch (type) {
     case ACTION_LIST.REQUEST:
-      return setStateRequest()
+      return fetchList.request()
     case ACTION_LIST.SUCCESS:
-      return normalizerList(data)
+      return fetchList.success(data)
     case ACTION_LIST.FAILURE:
-      return setStateFailure()
+      return fetchList.failure()
     case ACTION_DETAIL.REQUEST:
-      return setStateWithKeyRequest()
+      return fetchDataWithKey.request()
     case ACTION_DETAIL.SUCCESS:
-      return setStateWithKeySuccess({ data })
+      return fetchDataWithKey.success({ data })
     case ACTION_DETAIL.FAILURE:
-      return setStateWithKeyFailure()
+      return fetchDataWithKey.failure()
     case ACTION_UPDATE.REQUEST:
-      return updateDataWithKeyRequest()
+      return updateDataWithKey.request()
     case ACTION_UPDATE.SUCCESS:
-      return updateDataWithKeySuccess(data)
+      return updateDataWithKey.success(data)
     case ACTION_UPDATE.FAILURE:
-      return updateDataWithKeyFailure()
+      return updateDataWithKey.failure()
+    case ACTION_DELETE.REQUEST:
+      return deleteKey.request()
+    case ACTION_DELETE.SUCCESS:
+      return deleteKey.success()
+    case ACTION_DELETE.FAILURE:
+      return deleteKey.failure()
     default:
       return state
   }

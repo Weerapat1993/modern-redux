@@ -13,32 +13,22 @@ const initialState = {
 }
 
 const testReducer = (state = initialState, action) => {
+  // Action Value
+  const { type, data } = action
+  // Reducer Creator
   const {
-    setStateWithKey,
-    errorMessage,
+    setStateRequest,
+    setStateSuccess,
+    setStateFailure,
   } = reducerCreator(state, action)
-  switch (action.type) {
+  // Switch Case to Store
+  switch (type) {
     case ACTION.REQUEST:
-      return setStateWithKey({
-        isFetching: true,
-        isReload: false,
-        error: '',
-        code: 0,
-      })
+      return setStateRequest()
     case ACTION.SUCCESS:
-      return setStateWithKey({
-        isFetching: false,
-        isReload: false,
-        error: '',
-        code: action.code,
-      })
+      return setStateSuccess({ data })
     case ACTION.FAILURE:
-      return setStateWithKey({
-        isFetching: false,
-        isReload: false,
-        error: errorMessage(),
-        code: action.code,
-      })
+      return setStateFailure()
     default:
       return state
   }

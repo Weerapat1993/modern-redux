@@ -20,17 +20,12 @@ export const defaultInitialState = {
  * @property {Error} error
  *
  * @typedef {Object} StateWithKey
- * @property {Boolean} isFetching
- * @property {Boolean} isReload
- * @property {String} error
- * @property {Number} code
- * @property {Object|Array} data
- *
- * @typedef {Object} Fillable
  * @property {boolean} isFetching check data when loading
+ * @property {boolean} isEditing check data when update
  * @property {boolean} isReload check data when reload again
  * @property {string} error error message response
- * @property {any} data data inforamtion
+ * @property {string} error error message response when update
+ * @property {Object|Array} data data inforamtion
  */
 
 /**
@@ -41,6 +36,41 @@ export const defaultInitialState = {
  */
 export const reducerCreator = (state, action, keyID) => {
   const key = keyID || action.key
+
+  // ! Private ----------------------------------------
+
+  /**
+   * Fillable Normalize Data
+   * @private
+   * @param {any} item data when you need normalize data
+   * @return {StateWithKey}
+   * @example
+   */
+  const _fillable = item => ({
+    isFetching: false,
+    isEditing: false,
+    isReload: false,
+    error: '',
+    errorUpdate: '',
+    data: item,
+  })
+
+  /**
+   * Convert Array To Object with key
+   * @private
+   * @param {Array.<Object>} array array data required normalize
+   * @param {string} primaryKey primaray key in array
+   * @return {Fillable}
+   */
+  const _normalizeData = (array, primaryKey = 'id') => {
+    const newData = {}
+    array.forEach((item) => {
+      newData[item[primaryKey]] = _fillable(item)
+    })
+    return newData
+  }
+
+  // * Public -----------------------------------------
 
   /**
    * Set State
@@ -82,35 +112,6 @@ export const reducerCreator = (state, action, keyID) => {
    * @return {StateWithKey} getState in key object
    */
   const getStateWithKey = () => state.keys[key]
-
-  /**
-   * Fillable Normalize Data
-   * @private
-   * @param {any} item data when you need normalize data
-   * @return {Fillable}
-   * @example
-   */
-  const _fillable = item => ({
-    isFetching: false,
-    isReload: false,
-    error: '',
-    data: item,
-  })
-
-  /**
-   * Convert Array To Object with key
-   * @private
-   * @param {Array.<Object>} array array data required normalize
-   * @param {string} primaryKey primaray key in array
-   * @return {Fillable}
-   */
-  const _normalizeData = (array, primaryKey = 'id') => {
-    const newData = {}
-    array.forEach((item) => {
-      newData[item[primaryKey]] = _fillable(item)
-    })
-    return newData
-  }
 
   /**
    * Normalizer List
@@ -207,6 +208,28 @@ export const reducerCreator = (state, action, keyID) => {
     ...newState,
   })
 
+  const updateDataWithKeyRequest = newState => setStateWithKey({
+    isEditing: true,
+    errorUpdate: '',
+    ...newState,
+  })
+
+  const updateDataWithKeySuccess = (data, newState) => setStateWithKey({
+    isEditing: false,
+    errorUpdate: '',
+    data: {
+      ...getStateWithKey().data,
+      ...data,
+    },
+    ...newState,
+  })
+
+  const updateDataWithKeyFailure = newState => setStateWithKey({
+    isEditing: false,
+    errorUpdate: errorMessage(),
+    ...newState,
+  })
+
   return {
     setState,
     setStateWithKey,
@@ -219,6 +242,9 @@ export const reducerCreator = (state, action, keyID) => {
     setStateWithKeyRequest,
     setStateWithKeySuccess,
     setStateWithKeyFailure,
+    updateDataWithKeyRequest,
+    updateDataWithKeySuccess,
+    updateDataWithKeyFailure,
   }
 }
 

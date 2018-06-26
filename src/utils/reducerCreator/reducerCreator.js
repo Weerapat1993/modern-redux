@@ -328,5 +328,3 @@ export const reducerCreator = (state, action, keyID) => {
     },
   }
 }
-
-export default reducerCreator
